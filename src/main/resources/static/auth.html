@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>U-Finance | Auth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <h1 class="text-4xl font-bold text-center mb-6">
+      <span class="text-blue-600">U</span><span class="text-black-500">-</span><span class="text-yellow-500">Finance</span>
+    </h1>
+
+
+    <!-- Toggle Form Buttons -->
+    <div class="flex justify-center space-x-4 mb-6">
+      <button id="btn-signin" onclick="showForm('signin')" class="px-4 py-2 rounded bg-blue-500 text-white">Sign
+        In</button>
+      <button id="btn-signup" onclick="showForm('signup')" class="px-4 py-2 rounded bg-gray-300 text-black">Sign
+        Up</button>
+    </div>
+
+    <!-- Sign In Form -->
+    <div id="signin-form">
+      <h2 class="text-lg font-semibold mb-4">Sign In</h2>
+      <input id="signin-username" type="text" placeholder="Username" class="border p-2 w-full mb-2">
+      <input id="signin-email" type="email" placeholder="Email" class="border p-2 w-full mb-2">
+      <input id="signin-password" type="password" placeholder="Password" class="border p-2 w-full mb-4">
+      <button onclick="signIn()" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Login</button>
+    </div>
+
+    <!-- Sign Up Form -->
+    <div id="signup-form" class="hidden">
+      <h2 class="text-lg font-semibold mb-4">Sign Up</h2>
+      <input id="signup-username" type="text" placeholder="Username" class="border p-2 w-full mb-2">
+      <input id="signup-email" type="email" placeholder="Email" class="border p-2 w-full mb-2">
+      <input id="signup-password" type="password" placeholder="Password" class="border p-2 w-full mb-4">
+      <button onclick="signUp()" class="bg-green-600 text-white px-4 py-2 rounded w-full">Register</button>
+    </div>
+  </div>
+
+  <script>
+    function showForm(form) {
+      const signinForm = document.getElementById("signin-form");
+      const signupForm = document.getElementById("signup-form");
+      const btnSignin = document.getElementById("btn-signin");
+      const btnSignup = document.getElementById("btn-signup");
+
+      if (form === "signin") {
+        signinForm.classList.remove("hidden");
+        signupForm.classList.add("hidden");
+
+        // Aktifkan tampilan tombol Sign In
+        btnSignin.classList.add("bg-blue-500", "text-white");
+        btnSignin.classList.remove("bg-gray-300", "text-black");
+
+        // Nonaktifkan tampilan tombol Sign Up
+        btnSignup.classList.add("bg-gray-300", "text-black");
+        btnSignup.classList.remove("bg-blue-500", "text-white");
+      } else {
+        signupForm.classList.remove("hidden");
+        signinForm.classList.add("hidden");
+
+        // Aktifkan tampilan tombol Sign Up
+        btnSignup.classList.add("bg-blue-500", "text-white");
+        btnSignup.classList.remove("bg-gray-300", "text-black");
+
+        // Nonaktifkan tampilan tombol Sign In
+        btnSignin.classList.add("bg-gray-300", "text-black");
+        btnSignin.classList.remove("bg-blue-500", "text-white");
+      }
+    }
+
+    async function signUp() {
+      const username = document.getElementById("signup-username").value;
+      const email = document.getElementById("signup-email").value;
+      const password = document.getElementById("signup-password").value;
+
+      const res = await fetch("/api/users/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password })
+      });
+
+      if (res.ok) {
+        alert("Sign up successful! Please log in.");
+        showForm("signin");
+      } else {
+        alert("Sign up failed.");
+      }
+    }
+
+    async function signIn() {
+      const username = document.getElementById("signin-username").value;
+      const email = document.getElementById("signin-email").value;
+      const password = document.getElementById("signin-password").value;
+
+      const res = await fetch("/api/users/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password })
+      });
+
+      const user = await res.json();
+      if (user && user.userId) {
+        localStorage.setItem("userId", user.userId);
+        window.location.href = "/dashboard.html";
+      } else {
+        alert("Invalid credentials. Please try again.");
+      }
+    }
+
+    // Load default ke form Sign In
+    document.addEventListener("DOMContentLoaded", () => {
+      showForm("signin");
+    });
+  </script>
+</body>
+
+</html>

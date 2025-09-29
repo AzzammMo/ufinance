@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>U-Finance Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="bg-blue-50 font-sans">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow p-6 space-y-4">
+      <h2 class="text-2xl font-bold">
+        <span class="text-indigo-600">U</span><span class="text-gray-700">-</span><span
+          class="text-amber-500">Finance</span>
+      </h2>
+      <button onclick="showSection('dashboard')"
+        class="w-full text-left px-4 py-2 rounded hover:bg-blue-100 flex items-center space-x-2">
+        <i class="fas fa-home text-blue-600"></i><span>Dashboard</span>
+      </button>
+      <div>
+        <h3 class="text-blue-600 font-semibold mb-2">Transaksi</h3>
+        <button onclick="showSection('add-transaction')"
+          class="w-full text-left px-4 py-2 rounded hover:bg-blue-100 flex items-center space-x-2">
+          <i class="fas fa-plus-circle text-blue-600"></i><span>Tambah Transaksi</span>
+        </button>
+        <button onclick="showSection('transaction-list')"
+          class="w-full text-left px-4 py-2 rounded hover:bg-blue-100 flex items-center space-x-2">
+          <i class="fas fa-list text-blue-600"></i><span>Daftar Transaksi</span>
+        </button>
+      </div>
+      <div>
+        <h3 class="text-blue-600 font-semibold mb-2">Kategori</h3>
+        <button onclick="showSection('add-category')"
+          class="w-full text-left px-4 py-2 rounded hover:bg-blue-100 flex items-center space-x-2">
+          <i class="fas fa-folder-plus text-blue-600"></i><span>Tambah Kategori</span>
+        </button>
+        <button onclick="showSection('category-list')"
+          class="w-full text-left px-4 py-2 rounded hover:bg-blue-100 flex items-center space-x-2">
+          <i class="fas fa-list text-blue-600"></i><span>Daftar Kategori</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8">
+      <!-- Dashboard -->
+      <div id="dashboard">
+        <p id="clock"
+          class="flex items-center gap-2 text-white text-sm mb-6 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-md w-fit">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-12.75a.75.75 0 00-1.5 0v4.25c0 .414.336.75.75.75h3a.75.75 0 000-1.5H10.75V5.25z"
+              clip-rule="evenodd" />
+          </svg>
+          <span id="clock-time">00:00:00</span>
+        </p>
+        <div class="bg-green-100 p-6 rounded-lg shadow-md flex items-center space-x-4 max-w-md">
+          <i class="fas fa-money-bill-wave text-green-600 text-4xl"></i>
+          <div>
+            <p class="text-sm text-green-700">Saldo Anda</p>
+            <p id="saldo" class="text-2xl font-bold text-green-800 transition-all duration-300">Rp 0</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 max-w-4xl">
+          <div class="bg-white p-4 rounded-lg shadow text-center">
+            <i class="fas fa-receipt text-indigo-500 text-3xl mb-2"></i>
+            <p class="text-sm text-gray-500">Total Transaksi</p>
+            <p id="totalTransaction" class="text-xl font-semibold text-gray-800">0</p>
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow text-center">
+            <i class="fas fa-arrow-circle-up text-green-500 text-3xl mb-2"></i>
+            <p class="text-sm text-gray-500">Income Terbesar</p>
+            <p id="totalIncome" class="text-xl font-semibold text-gray-800">Rp 0</p>
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow text-center">
+            <i class="fas fa-arrow-circle-down text-red-500 text-3xl mb-2"></i>
+            <p class="text-sm text-gray-500">Pengeluaran Terbesar</p>
+            <p id="totalExpense" class="text-xl font-semibold text-gray-800">Rp 0</p>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- Add Transaction -->
+      <div id="add-transaction" class="hidden">
+        <h2 class="text-xl font-semibold text-blue-700 mb-4">Tambah Transaksi</h2>
+        <input id="amount" type="number" placeholder="Jumlah" class="border p-2 w-full mb-2 rounded">
+        <select id="type" class="border p-2 w-full mb-2 rounded">
+          <option value="" disabled selected>Pilih Transaksi</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <input id="description" type="text" placeholder="Deskripsi" class="border p-2 w-full mb-2 rounded">
+        <input id="date" type="date" class="border p-2 w-full mb-2 rounded">
+        <select id="category" class="border p-2 w-full mb-4 rounded">
+          <option value="" disabled selected>Pilih Kategori</option>
+        </select>
+        <button onclick="addTransaction()"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
+      </div>
+
+      <!-- Transaction List -->
+      <div id="transaction-list" class="hidden">
+        <h2 class="text-xl font-semibold text-blue-700 mb-4">Daftar Transaksi</h2>
+
+        <table class="w-full bg-white rounded shadow-md table-auto">
+          <thead>
+            <tr class="bg-blue-100 text-left text-blue-800">
+              <th class="px-4 py-2">Deskripsi</th>
+              <th class="px-4 py-2">Jumlah</th>
+              <th class="px-4 py-2">Tipe</th>
+              <th class="px-4 py-2">Kategori</th>
+              <th class="px-4 py-2">Tanggal</th>
+            </tr>
+          </thead>
+          <tbody id="transactionTableBody"></tbody>
+          <div class="flex justify-between items-center mt-4" id="transactionPagination"></div>
+        </table>
+      </div>
+
+      <!-- Add Category -->
+      <div id="add-category" class="hidden">
+        <h2 class="text-xl font-semibold text-blue-700 mb-4">Tambah Kategori</h2>
+        <input id="categoryName" type="text" placeholder="Nama Kategori" class="border p-2 w-full mb-2 rounded">
+        <button onclick="addCategory()"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
+      </div>
+
+      <!-- Category List -->
+      <div id="category-list" class="hidden">
+        <h2 class="text-xl font-semibold text-blue-700 mb-4">Daftar Kategori</h2>
+        <table class="w-full bg-white rounded shadow-md table-auto">
+          <thead>
+            <tr class="bg-blue-100 text-left text-blue-800">
+              <th class="px-4 py-2">Nama Kategori</th>
+              <th class="px-4 py-2">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="categoryList"></tbody>
+          <div class="flex justify-between items-center mt-4" id="categoryPagination"></div>
+        </table>
+      </div>
+
+      <script>
+        function updateClock() {
+          const now = new Date();
+          const timeString = now.toLocaleTimeString("id-ID", { hour12: false });
+          document.getElementById("clock-time").textContent = timeString;
+        }
+
+        setInterval(updateClock, 1000); // update tiap detik
+        updateClock(); // panggil awal agar langsung tampil
+
+
+        const userId = localStorage.getItem("userId");
+
+        function showSection(sectionId) {
+          const sections = ["dashboard", "add-transaction", "transaction-list", "add-category", "category-list"];
+          sections.forEach(id => document.getElementById(id).classList.add("hidden"));
+          document.getElementById(sectionId).classList.remove("hidden");
+
+          if (sectionId === "dashboard") {
+            fetchSaldo();
+            fetchUsername();
+            fetchDashboardStats();
+          }
+          if (sectionId === "add-transaction") loadCategoryOptions();
+          if (sectionId === "transaction-list") loadTransactions();
+          if (sectionId === "category-list") loadCategories();
+        }
+
+        async function fetchSaldo() {
+          const userId = localStorage.getItem("userId");
+          const response = await fetch(`/api/users/saldo/${userId}`);
+          const data = await response.json();
+          // data = { totalIncome, totalExpense, saldo, totalTransactions }
+
+          document.getElementById("saldo").textContent = `Rp ${data.saldo.toLocaleString("id-ID")}`;
+          document.getElementById("totalIncome").textContent = `Rp ${data.totalIncome.toLocaleString("id-ID")}`;
+          document.getElementById("totalExpense").textContent = `Rp ${data.totalExpense.toLocaleString("id-ID")}`;
+          document.getElementById("totalTransaction").textContent = `${data.totalTransactions} transaksi`;
+        }
+
+        async function addTransaction() {
+          const amount = parseFloat(document.getElementById("amount").value);
+          const type = document.getElementById("type").value;
+          const description = document.getElementById("description").value;
+          const date = document.getElementById("date").value;
+          const categoryId = document.getElementById("category").value;
+
+          if (!amount || !description || !date || !categoryId) {
+            alert("Semua kolom wajib diisi.");
+            return;
+          }
+
+          const transactionData = {
+            amount,
+            type,
+            description,
+            date,
+            account: { id: parseInt(userId) },
+            category: { id: parseInt(categoryId) }
+          };
+
+          await fetch(`/api/transactions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(transactionData)
+          });
+
+          // Reset form
+          document.getElementById("amount").value = "";
+          document.getElementById("description").value = "";
+          document.getElementById("date").value = "";
+          document.getElementById("category").value = "";
+
+          fetchSaldo();
+          loadTransactions();
+          alert("Transaksi berhasil ditambahkan.");
+        }
+
+        async function loadTransactions() {
+          try {
+            const res = await fetch(`/api/transactions/${userId}`);
+            if (!res.ok) throw new Error("Gagal mengambil data transaksi.");
+
+            const data = await res.json();
+            const tbody = document.getElementById("transactionTableBody");
+            tbody.innerHTML = "";
+
+            if (data.length === 0) {
+              tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">Belum ada transaksi</td></tr>`;
+              return;
+            }
+
+            data.forEach(tx => {
+              const categoryName = tx.category?.categoryName || "-";
+              const formattedDate = new Date(tx.date).toLocaleDateString("id-ID");
+
+              tbody.innerHTML += `
+          <tr class="border-t">
+            <td class="px-4 py-2">${tx.description}</td>
+            <td class="px-4 py-2">Rp ${tx.amount}</td>
+            <td class="px-4 py-2 capitalize">${tx.type}</td>
+             <td class="px-4 py-2">${categoryName}</td>
+            <td class="px-4 py-2">${formattedDate}</td>
+          </tr>`;
+            });
+          } catch (error) {
+            console.error("Gagal memuat transaksi:", error);
+            alert("Terjadi kesalahan saat memuat transaksi.");
+          }
+        }
+
+        async function loadCategoryOptions() {
+          const res = await fetch(`/api/categories/${userId}`);
+          const categories = await res.json();
+          const select = document.getElementById("category");
+
+          select.innerHTML = `<option value="">Pilih Kategori</option>`;
+          categories.forEach(cat => {
+            select.innerHTML += `<option value="${cat.id}">${cat.categoryName}</option>`;
+          });
+        }
+
+        async function addCategory() {
+          const categoryName = document.getElementById("categoryName").value;
+          if (!categoryName) {
+            alert("Nama kategori tidak boleh kosong.");
+            return;
+          }
+
+          await fetch(`/api/categories/add?userId=${userId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ categoryName })
+          });
+
+          document.getElementById("categoryName").value = "";
+          loadCategories();
+          alert("Kategori berhasil ditambahkan.");
+        }
+
+        async function loadCategories() {
+          const res = await fetch(`/api/categories/${userId}`);
+          const data = await res.json();
+          const list = document.getElementById("categoryList");
+          list.innerHTML = "";
+
+          if (data.length === 0) {
+            list.innerHTML = `<tr><td colspan="2" class="text-center py-4 text-gray-500">Belum ada kategori</td></tr>`;
+            return;
+          }
+
+          data.forEach(cat => {
+            list.innerHTML += `
+        <tr class="border-t">
+          <td class="px-4 py-2">${cat.categoryName}</td>
+          <td class="px-4 py-2 space-x-2">
+            <button onclick="editCategory(${cat.id}, '${cat.categoryName}')" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Edit</button>
+            <button onclick="deleteCategory(${cat.id})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Hapus</button>
+          </td>
+        </tr>`;
+          });
+        }
+
+        async function editCategory(id, oldName) {
+          const newName = prompt("Edit Nama Kategori:", oldName);
+          if (newName && newName !== oldName) {
+            await fetch(`/api/categories/${id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ categoryName: newName })
+            });
+            loadCategories();
+          }
+        }
+
+        async function deleteCategory(id) {
+          if (confirm("Apakah Anda yakin ingin menghapus kategori ini?")) {
+            try {
+              const response = await fetch(`/api/categories/${id}`, {
+                method: "DELETE"
+              });
+
+              const text = await response.text();
+              if (response.ok) {
+                alert(text || "Kategori berhasil dihapus.");
+                loadCategories();
+              } else {
+                alert("Gagal menghapus kategori: " + text);
+              }
+            } catch (error) {
+              alert("Terjadi kesalahan saat menghapus: " + error.message);
+            }
+          }
+        }
+        // async function fetchUsername() {
+        //   const response = await fetch(`/api/users/${userId}`);
+        //   if (response.ok) {
+        //     const data = await response.json();
+        //     document.getElementById("welcomeMessage").textContent = `Hai, ${data.username}`;
+        //   } else {
+        //     document.getElementById("welcomeMessage").textContent = `Hai, Pengguna`;
+        //   }
+        // }
+        // Inisialisasi awal
+        showSection("dashboard");
+        fetchSaldo();
+      </script>
+    </main>
+  </div>
+</body>
+
+</html>
